@@ -1,4 +1,7 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET');
+header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
 $host = 'ls-24ab11e36d4d24df477ba5a5a8f5753b1eb7c14a.cylsiewx0zgx.us-east-1.rds.amazonaws.com';
