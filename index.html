@@ -44,7 +44,7 @@
 
       const rut = $('#rut').val().trim();
       const codigoTransaccion = $('#codigo_transaccion').val().trim();
-      let url = './api/registros.php?';
+      let url = 'https://log-totem.dev-wit.com/boletos/api/registros.php?';
 
       if (rut) url += 'rut=' + encodeURIComponent(rut) + '&';
       if (codigoTransaccion) url += 'codigo_transaccion=' + encodeURIComponent(codigoTransaccion);
