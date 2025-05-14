@@ -60,6 +60,17 @@
           cards = '<div class="alert alert-warning">No se encontraron registros.</div>';
         } else {
           data.forEach(row => {
+
+            let iconoEstado = '';
+  const estado = row.estado_transaccion?.toLowerCase() || '';
+
+  if (estado.includes('realizado')) {
+    iconoEstado = '<span class="text-success fw-bold">✅</span>';
+  } else if (estado.includes('fallido') || estado.includes('pendiente')) {
+    iconoEstado = '<span class="text-danger fw-bold">❌</span>';
+  }
+
+
             cards += `
               <div class="card mb-3 shadow-sm">
                 <div class="card-body">
@@ -70,7 +81,7 @@
                   <p class="card-text mb-1"><strong>Destino:</strong> ${row.destino}</p>
                   <p class="card-text mb-1"><strong>Fecha Viaje:</strong> ${row.fecha_viaje}</p>
                   <p class="card-text mb-1"><strong>Asiento:</strong> ${row.asiento}</p>
-                  <p class="card-text mb-1"><strong>Estado:</strong> ${row.estado_transaccion}</p>
+                  <p class="card-text mb-1"><strong>Estado:</strong> ${row.estado_transaccion} ${iconoEstado}</p>
                   <p class="card-text mb-1"><strong>Terminal:</strong> ${row.id_pos}</p>
                   <p class="card-text mb-1"><strong>Total Transaccion:</strong> ${row.total_transaccion}</p>
                   <p class="card-text mb-1"><strong>Código Transacción:</strong> ${row.codigo_transaccion || '—'}</p>
