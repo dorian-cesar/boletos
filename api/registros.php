@@ -54,7 +54,7 @@ $query = "
         WHERE $filtro
         GROUP BY codigo_reserva
     ) t2 ON t1.id = t2.max_id
-    ORDER BY t1.id ASC
+    ORDER BY t1.id DESC
 ";
 
 $stmt = $mysqli->prepare($query);
