@@ -17,13 +17,12 @@ if ($mysqli->connect_error) {
     exit;
 }
 
-
 $rut = $_GET['rut'] ?? '';
-$codigo_transaccion = $_GET['codigo_transaccion'] ?? '';
+$codigo_autorizacion = $_GET['codigo_autorizacion'] ?? '';
 
-if (!$rut && !$codigo_transaccion) {
+if (!$rut && !$codigo_autorizacion) {
     http_response_code(400);
-    echo json_encode(["error" => "Debe enviar 'rut' o 'codigo_transaccion' como parámetro"]);
+    echo json_encode(["error" => "Debe enviar 'rut' o 'codigo_autorizacion' como parámetro"]);
     exit;
 }
 
@@ -37,10 +36,10 @@ if ($rut) {
     $tipos .= 's';
     $parametros[] = $rut;
 }
-if ($codigo_transaccion) {
-    $condiciones[] = "codigo_transaccion = ?";
+if ($codigo_autorizacion) {
+    $condiciones[] = "codigo_autorizacion = ?";
     $tipos .= 's';
-    $parametros[] = $codigo_transaccion;
+    $parametros[] = $codigo_autorizacion;
 }
 
 $filtro = implode(" OR ", $condiciones);

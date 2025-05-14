@@ -20,8 +20,8 @@
         <input type="text" id="rut" name="rut" class="form-control" placeholder="Ej: 10520823-5">
       </div>
       <div class="mb-3">
-        <label for="codigo_transaccion" class="form-label">Código Transacción</label>
-        <input type="text" id="codigo_transaccion" name="codigo_transaccion" class="form-control" placeholder="Ej: TX123456">
+        <label for="codigo_autorizacion" class="form-label">Código Autorización</label>
+        <input type="text" id="codigo_autorizacion" name="codigo_autorizacion" class="form-control" placeholder="Ej: AUTH123456">
       </div>
       <div class="d-grid">
         <button type="submit" class="btn btn-primary">Buscar</button>
@@ -43,14 +43,14 @@
       e.preventDefault();
 
       const rut = $('#rut').val().trim();
-      const codigoTransaccion = $('#codigo_transaccion').val().trim();
+      const codigoAutorizacion = $('#codigo_autorizacion').val().trim();
       let url = 'https://log-totem.dev-wit.com/boletos/api/registros.php?';
 
       if (rut) url += 'rut=' + encodeURIComponent(rut) + '&';
-      if (codigoTransaccion) url += 'codigo_transaccion=' + encodeURIComponent(codigoTransaccion);
+      if (codigoAutorizacion) url += 'codigo_autorizacion=' + encodeURIComponent(codigoAutorizacion);
 
-      if (!rut && !codigoTransaccion) {
-        alert('Debe ingresar un RUT o un Código de Transacción.');
+      if (!rut && !codigoAutorizacion) {
+        alert('Debe ingresar un RUT o un Código de Autorización.');
         return;
       }
 
@@ -70,8 +70,8 @@
                   <p class="card-text mb-1"><strong>Fecha Viaje:</strong> ${row.fecha_viaje}</p>
                   <p class="card-text mb-1"><strong>Asiento:</strong> ${row.asiento}</p>
                   <p class="card-text mb-1"><strong>Estado:</strong> ${row.estado_transaccion}</p>
-                  <p class="card-text"><strong>Código Transacción:</strong> ${row.codigo_transaccion || '—'}</p>
-                  
+                  <p class="card-text mb-1"><strong>Código Transacción:</strong> ${row.codigo_transaccion || '—'}</p>
+                  <p class="card-text"><strong>Código Autorización:</strong> ${row.codigo_autorizacion || '—'}</p>
                 </div>
               </div>
             `;
