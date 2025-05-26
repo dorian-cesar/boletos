@@ -135,7 +135,7 @@
         <p class="card-text mb-1"><strong>Código Transacción:</strong> ${
           row.codigo_transaccion || "—"
         }</p>
-        <p class="card-text"><strong>Código Autorización:</strong> ${
+        <p class="card-text mb-1"><strong>Código Autorización:</strong> ${
           row.codigo_autorizacion || "—"
         }</p>
         <p class="card-text"><strong>Tipo de Tarjeta:</strong> ${
@@ -145,7 +145,7 @@
           mostrarBotonGenerar
             ? `
           <div class="mt-3">
-            <button class="btn btn-sm btn-success generar-boleto" data-id="${row.id}">Generar Boleto</button>
+            <button class="btn btn-sm btn-success generar-boleto p-2" data-id="${row.id}">Generar Boleto</button>
           </div>
         `
             : ""

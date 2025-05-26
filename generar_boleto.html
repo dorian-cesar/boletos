@@ -45,9 +45,9 @@
 
       <div id="boletoConfirmado" class="card shadow p-3 mt-4 d-none">
         <h5 class="text-success mb-3">Boleto Confirmado</h5>
-        <p class="mb-2">
+        <h4 class="mb-2">
           <strong>Numero Boleto:</strong> <span id="operator_pnr"></span>
-        </p>
+        </h4>
         <p class="mb-2">
           <strong>Número de Ticket:</strong> <span id="ticket_number"></span>
         </p>
@@ -265,7 +265,7 @@
                 destino: ticket.destination,
                 fecha_viaje: ticket.travel_date,
                 hora_viaje: ticket.dep_time,
-                asiento: ticket.seat_numbers,
+                asiento: sessionData.asiento,
                 total_transaccion: sessionData.total_transaccion,
                 fecha_transaccion: sessionData.fecha_transaccion,
                 hora_transaccion: sessionData.hora_transaccion,
@@ -283,10 +283,22 @@
 
               console.log("Datos del boleto:", bookingData);
 
+              const bookingDataUpdate = {
+                id: sessionData.id,
+                nuevo_estado: "Pago Intercambio",
+              };
+
+              console.log("Datos de actualización:", bookingDataUpdate);
+
               // Guardado en base de datos
-              return axios.post(
+              axios.post(
                 "https://log-totem.dev-wit.com/backend-log-totem-transbank/api.php",
                 { bookingData }
+              );
+              // Actualización en la base de datos
+              axios.post(
+                "https://log-totem.dev-wit.com/boletos/api/update.php",
+                { bookingDataUpdate }
               );
             })
             .then(() => {
