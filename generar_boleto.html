@@ -1,202 +1,309 @@
 <!DOCTYPE html>
 <html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Resumen del Boleto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <title>Resumen del Boleto</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-</head>
+  <body class="bg-light">
+    <div class="container-sm mt-4">
+      <h4 class="mb-3 text-center">Resumen del Boleto</h4>
 
-<body class="bg-light">
+      <div id="boletoResumen" class="card shadow p-3 d-none">
+        <p class="mb-2">
+          <strong>RUT:</strong> <span id="rut" class="text-break"></span>
+        </p>
+        <p class="mb-2">
+          <strong>ID Bus:</strong> <span id="id_bus" class="text-break"></span>
+        </p>
+        <p class="mb-2">
+          <strong>Estado del Boleto:</strong>
+          <span id="estado_boleto" class="fw-bold text-primary"></span>
+        </p>
+        <p class="mb-2">
+          <strong>Fecha de Viaje:</strong> <span id="fecha_viaje"></span>
+        </p>
+        <p class="mb-2">
+          <strong>Hora de Viaje:</strong> <span id="hora_viaje"></span>
+        </p>
+        <p class="mb-2">
+          <strong>Asiento Seleccionado:</strong>
+          <span id="asientoSeleccionado" class="fw-bold text-success"></span>
+        </p>
+      </div>
 
-  <div class="container-sm mt-4">
-    <h4 class="mb-3 text-center">Resumen del Boleto</h4>
+      <div class="d-grid pt-3">
+        <button id="atras" class="btn btn-primary">Atrás</button>
+      </div>
 
-    <div id="boletoResumen" class="card shadow p-3 d-none">
-      <p class="mb-2"><strong>RUT:</strong> <span id="rut" class="text-break"></span></p>
-      <p class="mb-2"><strong>ID Bus:</strong> <span id="id_bus" class="text-break"></span></p>
-      <p class="mb-2"><strong>Estado del Boleto:</strong> <span id="estado_boleto" class="fw-bold text-primary"></span></p>
-      <p class="mb-2"><strong>Fecha de Viaje:</strong> <span id="fecha_viaje"></span></p>
-      <p class="mb-2"><strong>Hora de Viaje:</strong> <span id="hora_viaje"></span></p>
-      <p class="mb-2"><strong>Asiento Seleccionado:</strong> <span id="asientoSeleccionado" class="fw-bold text-success"></span></p>
+      <div id="boletoConfirmado" class="card shadow p-3 mt-4 d-none">
+        <h5 class="text-success mb-3">Boleto Confirmado</h5>
+        <p class="mb-2">
+          <strong>Numero Boleto:</strong> <span id="operator_pnr"></span>
+        </p>
+        <p class="mb-2">
+          <strong>Número de Ticket:</strong> <span id="ticket_number"></span>
+        </p>
+        <p class="mb-2"><strong>Origen:</strong> <span id="origen"></span></p>
+        <p class="mb-2"><strong>Destino:</strong> <span id="destino"></span></p>
+        <p class="mb-2">
+          <strong>Fecha de Viaje:</strong> <span id="fecha_confirmada"></span>
+        </p>
+        <p class="mb-2">
+          <strong>Asientos:</strong> <span id="asientos_confirmados"></span>
+        </p>
+        <p class="mb-2">
+          <strong>Hora Salida:</strong> <span id="hora_salida"></span>
+        </p>
+        <p class="mb-2">
+          <strong>Tipo de Bus:</strong> <span id="tipo_bus"></span>
+        </p>
+      </div>
+
+      <!-- Loaders -->
+      <div id="loaderReserva" class="alert alert-info mt-3 d-none">
+        ⏳ Esperando reserva...
+      </div>
+      <div id="loaderConfirmacion" class="alert alert-info mt-3 d-none">
+        ⏳ Esperando confirmación del boleto...
+      </div>
+
+      <div class="mt-3" id="asientos">
+        <label for="asientoSelect" class="form-label"
+          >Asientos Disponibles</label
+        >
+        <select id="asientoSelect" class="form-select">
+          <option class="mb-2" value="">
+            Cargando asientos disponibles...
+          </option>
+        </select>
+      </div>
+
+      <div id="errorMsg" class="alert alert-danger d-none mt-3">
+        No se encontró la información del boleto.
+      </div>
     </div>
 
-    <div id="boletoConfirmado" class="card shadow p-3 mt-4 d-none">
-      <h5 class="text-success mb-3">Boleto Confirmado</h5>
-      <p class="mb-2"><strong>Numero Boleto:</strong> <span id="operator_pnr"></span></p>
-      <p class="mb-2"><strong>Número de Ticket:</strong> <span id="ticket_number"></span></p>
-      <p class="mb-2"><strong>Origen:</strong> <span id="origen"></span></p>
-      <p class="mb-2"><strong>Destino:</strong> <span id="destino"></span></p>
-      <p class="mb-2"><strong>Fecha de Viaje:</strong> <span id="fecha_confirmada"></span></p>
-      <p class="mb-2"><strong>Asientos:</strong> <span id="asientos_confirmados"></span></p>
-      <p class="mb-2"><strong>Hora Salida:</strong> <span id="hora_salida"></span></p>
-      <p class="mb-2"><strong>Tipo de Bus:</strong> <span id="tipo_bus"></span></p>
-    </div>
+    <script>
+      bus_datos = {};
+      let asientosDisponibles = [];
+      idBus = "";
 
-    <!-- Loaders -->
-    <div id="loaderReserva" class="alert alert-info mt-3 d-none">⏳ Esperando reserva...</div>
-    <div id="loaderConfirmacion" class="alert alert-info mt-3 d-none">⏳ Esperando confirmación del boleto...</div>
+      $(document).ready(function () {
+        $("#atras").on("click", function () {
+          window.location.href = "index.html";
+        });
+        const rawData = sessionStorage.getItem("boleto_data");
+        const asientoSelect = document.getElementById("asientoSelect");
 
-    <div class="mt-4" id="asientos">
-      <label for="asientoSelect" class="form-label">Asientos Disponibles</label>
-      <select id="asientoSelect" class="form-select">
-        <option value="">Cargando asientos disponibles...</option>
-      </select>
-    </div>
+        if (rawData) {
+          try {
+            const boleto = JSON.parse(rawData);
+            idBus = boleto.id_bus;
 
-    <div id="errorMsg" class="alert alert-danger d-none mt-3">No se encontró la información del boleto.</div>
-  </div>
+            $("#rut").text(boleto.rut);
+            $("#id_bus").text(boleto.id_bus);
+            $("#estado_boleto").text(boleto.estado_boleto);
+            $("#fecha_viaje").text(boleto.fecha_viaje);
+            $("#hora_viaje").text(boleto.hora_viaje);
+            $("#boletoResumen").removeClass("d-none");
 
-  <script>
-    bus_datos = {};
-    let asientosDisponibles = [];
-    idBus = '';
-
-    $(document).ready(function () {
-      const rawData = sessionStorage.getItem('boleto_data');
-      const asientoSelect = document.getElementById('asientoSelect');
-
-      if (rawData) {
-        try {
-          const boleto = JSON.parse(rawData);
-          idBus = boleto.id_bus;
-
-          $('#rut').text(boleto.rut);
-          $('#id_bus').text(boleto.id_bus);
-          $('#estado_boleto').text(boleto.estado_boleto);
-          $('#fecha_viaje').text(boleto.fecha_viaje);
-          $('#hora_viaje').text(boleto.hora_viaje);
-          $('#boletoResumen').removeClass('d-none');
-
-          if (!idBus) {
-            asientoSelect.innerHTML = '<option value="">Error: ID de bus no encontrado</option>';
-            return;
-          }
-
-          const url = `https://newstg3-gdsbus.kupos.cl/gds/api/ui_schedule/${idBus}.json?api_key=TSXFQYAPI25766888`;
-
-          axios.get(url)
-            .then(response => {
-              const availableString = response.data.result.bus_layout.available;
-              bus_datos = response.data.result;
-              const availableArray = availableString.split(',');
-
-              const seats = availableArray.map(item => {
-                const [num, price] = item.split('|');
-                return {
-                  num: (num || '').trim(),
-                  price: (price || '0').trim()
-                };
-              }).filter(seat => seat.num !== '');
-
-              asientosDisponibles = seats;
-
-              asientoSelect.innerHTML = '<option value="">Seleccione un asiento</option>';
-              seats.forEach(seat => {
-                const option = document.createElement('option');
-                option.value = seat.num;
-                option.textContent = `Asiento ${seat.num} - $${seat.price}`;
-                asientoSelect.appendChild(option);
-              });
-            })
-            .catch(error => {
-              console.error('Error al cargar los asientos:', error);
-              asientoSelect.innerHTML = '<option value="">Error al cargar los asientos</option>';
-            });
-        } catch (err) {
-          console.error('Error al parsear boleto_data:', err);
-          $('#errorMsg').removeClass('d-none').text("Error al leer los datos del boleto.");
-        }
-      } else {
-        $('#errorMsg').removeClass('d-none');
-      }
-
-      // Evento cambio de asiento
-      asientoSelect.addEventListener('change', function () {
-        const asiento = asientoSelect.value;
-        const asientoSeleccionado = asientosDisponibles.find(s => s.num === asiento);
-        document.getElementById('asientoSeleccionado').textContent = asiento ? `Asiento ${asiento}` : '';
-
-        const payload = {
-          book_ticket: {
-            seat_details: {
-              seat_detail: [
-                {
-                  seat_number: asientoSeleccionado.num,
-                  fare: asientoSeleccionado.price,
-                  title: "Mr",
-                  name: "Dorian gonzalez",
-                  age: "55",
-                  sex: "M",
-                  is_primary: "true",
-                  id_card_type: "1",
-                  id_card_number: "10520823k",
-                  id_card_issued_by: "oneone"
-                }
-              ]
-            },
-            contact_detail: {
-              mobile_number: "942858102",
-              emergency_name: "Dorian Gonzalez",
-              email: "dgonzalez@wit.la"
+            if (!idBus) {
+              asientoSelect.innerHTML =
+                '<option value="">Error: ID de bus no encontrado</option>';
+              return;
             }
-          },
-          origin_id: bus_datos.origin_id,
-          destination_id: bus_datos.destination_id,
-          boarding_at: "224",
-          no_of_seats: "1",
-          travel_date: bus_datos.travel_date,
-          available_seats: bus_datos.available_seats,
-          cost: bus_datos.cost,
-          bus_type: bus_datos.bus_type,
-          route_id: bus_datos.route_id
-        };
 
-        const reservaUrl = `https://newstg3-gdsbus.kupos.cl/gds/api/tentative_booking/${idBus}.json?api_key=TSXFQYAPI25766888&region=chile`;
-        const confirmUrlBase = `https://newstg3-gdsbus.kupos.cl/gds/api/confirm_booking`;
+            const url = `https://newstg3-gdsbus.kupos.cl/gds/api/ui_schedule/${idBus}.json?api_key=TSXFQYAPI25766888`;
 
-        $('#loaderReserva').removeClass('d-none');
-        $('#loaderConfirmacion').addClass('d-none');
-        $('#boletoConfirmado').addClass('d-none');
+            axios
+              .get(url)
+              .then((response) => {
+                const availableString =
+                  response.data.result.bus_layout.available;
+                bus_datos = response.data.result;
+                const availableArray = availableString.split(",");
 
-        axios.post(reservaUrl, payload)
-          .then(response => {
-            $('#loaderReserva').addClass('d-none');
-            $('#loaderConfirmacion').removeClass('d-none');
+                const seats = availableArray
+                  .map((item) => {
+                    const [num, price] = item.split("|");
+                    return {
+                      num: (num || "").trim(),
+                      price: (price || "0").trim(),
+                    };
+                  })
+                  .filter((seat) => seat.num !== "");
 
-            const reserva = response.data.result.ticket_details.pnr_number;
-            console.log("Reserva temporal:", reserva);
+                asientosDisponibles = seats;
 
-            return axios.post(`${confirmUrlBase}/${reserva}.json?api_key=TSXFQYAPI25766888&region=chile`);
-          })
-          .then(confirmResponse => {
-            $('#loaderConfirmacion').addClass('d-none');
+                asientoSelect.innerHTML =
+                  '<option value="">Seleccione un asiento</option>';
+                seats
+                  .sort((a, b) => a.num - b.num)
+                  .forEach((seat) => {
+                    const option = document.createElement("option");
+                    option.value = seat.num;
+                    option.textContent = `Asiento ${seat.num}`;
+                    asientoSelect.appendChild(option);
+                  });
+              })
+              .catch((error) => {
+                console.error("Error al cargar los asientos:", error);
+                asientoSelect.innerHTML =
+                  '<option value="">Error al cargar los asientos</option>';
+              });
+          } catch (err) {
+            console.error("Error al parsear boleto_data:", err);
+            $("#errorMsg")
+              .removeClass("d-none")
+              .text("Error al leer los datos del boleto.");
+          }
+        } else {
+          $("#errorMsg").removeClass("d-none");
+        }
 
-            const ticket = confirmResponse.data.result.ticket_details;
-            $('#operator_pnr').text(ticket.operator_pnr);
-            $('#ticket_number').text(ticket.ticket_number);
-            $('#origen').text(ticket.origin);
-            $('#destino').text(ticket.destination);
-            $('#fecha_confirmada').text(ticket.travel_date);
-            $('#asientos_confirmados').text(ticket.seat_numbers);
-            $('#hora_salida').text(ticket.dep_time);
-            $('#tipo_bus').text(ticket.bus_type);
+        // Evento cambio de asiento
+        asientoSelect.addEventListener("change", function () {
+          const asiento = asientoSelect.value;
+          const asientoSeleccionado = asientosDisponibles.find(
+            (s) => s.num === asiento
+          );
+          document.getElementById("asientoSeleccionado").textContent = asiento
+            ? `Asiento ${asiento}`
+            : "";
 
-            $('#boletoConfirmado').removeClass('d-none');
-             $('#asientos').addClass('d-none');
-          })
-          .catch(error => {
-            $('#loaderReserva').addClass('d-none');
-            $('#loaderConfirmacion').addClass('d-none');
-            console.error('Error durante la reserva o confirmación:', error);
-            alert('Ocurrió un error al procesar el boleto.');
-          });
+          const payload = {
+            book_ticket: {
+              seat_details: {
+                seat_detail: [
+                  {
+                    seat_number: asientoSeleccionado.num,
+                    fare: asientoSeleccionado.price,
+                    title: "Mr",
+                    name: "Dorian gonzalez",
+                    age: "55",
+                    sex: "M",
+                    is_primary: "true",
+                    id_card_type: "1",
+                    id_card_number: "10520823k",
+                    id_card_issued_by: "oneone",
+                  },
+                ],
+              },
+              contact_detail: {
+                mobile_number: "942858102",
+                emergency_name: "Dorian Gonzalez",
+                email: "dgonzalez@wit.la",
+              },
+            },
+            origin_id: bus_datos.origin_id,
+            destination_id: bus_datos.destination_id,
+            boarding_at: "224",
+            no_of_seats: "1",
+            travel_date: bus_datos.travel_date,
+            available_seats: bus_datos.available_seats,
+            cost: bus_datos.cost,
+            bus_type: bus_datos.bus_type,
+            route_id: bus_datos.route_id,
+          };
+
+          const reservaUrl = `https://newstg3-gdsbus.kupos.cl/gds/api/tentative_booking/${idBus}.json?api_key=TSXFQYAPI25766888&region=chile`;
+          const confirmUrlBase = `https://newstg3-gdsbus.kupos.cl/gds/api/confirm_booking`;
+
+          $("#atras").prop("disabled", true);
+
+          $("#loaderReserva").removeClass("d-none");
+          $("#loaderConfirmacion").addClass("d-none");
+          $("#boletoConfirmado").addClass("d-none");
+
+          axios
+            .post(reservaUrl, payload)
+            .then((response) => {
+              $("#loaderReserva").addClass("d-none");
+              $("#loaderConfirmacion").removeClass("d-none");
+
+              const reserva = response.data.result.ticket_details.pnr_number;
+              console.log("Reserva temporal:", reserva);
+
+              return axios.post(
+                `${confirmUrlBase}/${reserva}.json?api_key=TSXFQYAPI25766888&region=chile`
+              );
+            })
+            .then((confirmResponse) => {
+              $("#loaderConfirmacion").addClass("d-none");
+
+              const ticket = confirmResponse.data.result.ticket_details;
+              $("#operator_pnr").text(ticket.operator_pnr);
+              $("#ticket_number").text(ticket.ticket_number);
+              $("#origen").text(ticket.origin);
+              $("#destino").text(ticket.destination);
+              $("#fecha_confirmada").text(ticket.travel_date);
+              $("#asientos_confirmados").text(ticket.seat_numbers);
+              $("#hora_salida").text(ticket.dep_time);
+              $("#tipo_bus").text(ticket.bus_type);
+
+              $("#boletoConfirmado").removeClass("d-none");
+              $("#asientos").addClass("d-none");
+
+              $("#atras").prop("disabled", false);
+
+              const sessionData =
+                JSON.parse(sessionStorage.getItem("boleto_data")) || {};
+
+              const bookingData = {
+                ...sessionData,
+                numero_boleto: ticket.operator_pnr,
+                estado_boleto: "Confirmado",
+                origen: ticket.origin,
+                destino: ticket.destination,
+                fecha_viaje: ticket.travel_date,
+                hora_viaje: ticket.dep_time,
+                asiento: ticket.seat_numbers,
+                total_transaccion: sessionData.total_transaccion,
+                fecha_transaccion: sessionData.fecha_transaccion,
+                hora_transaccion: sessionData.hora_transaccion,
+                codigo_reserva: ticket.ticket_number,
+                codigo_transaccion: sessionData.codigo_transaccion,
+                codigo_autorizacion: sessionData.codigo_autorizacion,
+                id_pos: sessionData.id_pos,
+                id_bus: sessionData.id_bus,
+                tipo_tarjeta: sessionData.tipo_tarjeta,
+                tarjeta_marca: sessionData.tarjeta_marca,
+                estado_transaccion: "Pago realizado",
+                rut: sessionData.rut || "Sin RUT",
+                numTotem: sessionData.numTotem,
+              };
+
+              console.log("Datos del boleto:", bookingData);
+
+              // Guardado en base de datos
+              return axios.post(
+                "https://log-totem.dev-wit.com/backend-log-totem-transbank/api.php",
+                { bookingData }
+              );
+            })
+            .then(() => {
+              console.log("Guardado exitoso en DB (confirm booking)");
+            })
+            .catch((error) => {
+              $("#loaderReserva").addClass("d-none");
+              $("#loaderConfirmacion").addClass("d-none");
+              $("#atras").prop("disabled", false);
+              console.error(
+                "Error durante la reserva, confirmación o guardado:",
+                error
+              );
+              alert("Ocurrió un error al procesar el boleto.");
+            });
+        });
       });
-    });
-  </script>
-
-</body>
+    </script>
+  </body>
 </html>
