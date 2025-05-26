@@ -298,7 +298,7 @@
               // Actualización en la base de datos
               axios.post(
                 "https://log-totem.dev-wit.com/boletos/api/update.php",
-                { bookingDataUpdate }
+                bookingDataUpdate 
               );
             })
             .then(() => {
