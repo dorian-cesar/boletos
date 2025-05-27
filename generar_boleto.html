@@ -129,6 +129,8 @@
                 const availableString =
                   response.data.result.bus_layout.available;
                 bus_datos = response.data.result;
+                boarding_at = response.data.result.boarding_stage_coordinates.split('|')[0];
+                console.log("bus_datos:", bus_datos);
                 const availableArray = availableString.split(",");
 
                 const seats = availableArray
@@ -205,7 +207,7 @@
             },
             origin_id: bus_datos.origin_id,
             destination_id: bus_datos.destination_id,
-            boarding_at: bus_datos.boarding_at,
+            boarding_at: boarding_at,
             no_of_seats: "1",
             travel_date: bus_datos.travel_date,
             available_seats: bus_datos.available_seats,
@@ -213,6 +215,8 @@
             bus_type: bus_datos.bus_type,
             route_id: bus_datos.route_id,
           };
+
+          console.log("Payload de reserva:", payload);
 
           const reservaUrl = `https://newstg3-gdsbus.kupos.cl/gds/api/tentative_booking/${idBus}.json?api_key=TSXFQYAPI25766888&region=chile`;
           const confirmUrlBase = `https://newstg3-gdsbus.kupos.cl/gds/api/confirm_booking`;
