@@ -48,8 +48,6 @@ $(document).ready(function () {
         let availableArray = availableString.split(",");
         availableArray.shift();
 
-        availableArray = [];
-
         console.log("bus_data: ", response.data)
 
         if (!availableArray.length || !availableArray[0]) {
