@@ -124,6 +124,9 @@
         <p class="card-text mb-1"><strong>Fecha Viaje:</strong> ${
           row.fecha_viaje
         }</p>
+        <p class="card-text mb-1"><strong>Hora Viaje:</strong> ${
+          row.hora_viaje.slice(0, 5) || "—"
+        } hrs</p>
         <p class="card-text mb-1"><strong>Asiento:</strong> ${row.asiento}</p>
         <p class="card-text mb-1"><strong>Estado:</strong> ${
           row.estado_transaccion
@@ -137,9 +140,6 @@
         }</p>
         <p class="card-text mb-1"><strong>Código Autorización:</strong> ${
           row.codigo_autorizacion || "—"
-        }</p>
-        <p class="card-text"><strong>Tipo de Tarjeta:</strong> ${
-          row.tipo_tarjeta || "—"
         }</p>
         ${
           mostrarBotonGenerar

@@ -107,12 +107,13 @@
           try {
             const boleto = JSON.parse(rawData);
             idBus = boleto.id_bus;
+            const horaViaje = `${boleto.hora_viaje.slice(0, 5) + " hrs"}`;
 
             $("#rut").text(boleto.rut);
             $("#id_bus").text(boleto.id_bus);
             $("#estado_boleto").text(boleto.estado_boleto);
             $("#fecha_viaje").text(boleto.fecha_viaje);
-            $("#hora_viaje").text(boleto.hora_viaje);
+            $("#hora_viaje").text(horaViaje);
             $("#boletoResumen").removeClass("d-none");
 
             if (!idBus) {
@@ -129,7 +130,8 @@
                 const availableString =
                   response.data.result.bus_layout.available;
                 bus_datos = response.data.result;
-                boarding_at = response.data.result.boarding_stage_coordinates.split('|')[0];
+                boarding_at =
+                  response.data.result.boarding_stage_coordinates.split("|")[0];
                 console.log("bus_datos:", bus_datos);
                 const availableArray = availableString.split(",");
 
@@ -250,9 +252,26 @@
               $("#destino").text(ticket.destination);
               $("#fecha_confirmada").text(ticket.travel_date);
               $("#asientos_confirmados").text(ticket.seat_numbers);
-              $("#hora_salida").text(ticket.dep_time);
-              $("#tipo_bus").text(ticket.bus_type);
 
+              let hora12 = ticket.dep_time.trim();
+              function convertir12a24(hora12) {
+                let [time, modifier] = hora12.split(" ");
+                let [hours, minutes] = time.split(":").map(Number);
+                if (modifier.toLowerCase() === "pm" && hours !== 12) {
+                  hours += 12;
+                }
+                if (modifier.toLowerCase() === "am" && hours === 12) {
+                  hours = 0;
+                }
+                let hours24 = hours < 10 ? "0" + hours : hours;
+                return `${hours24}:${
+                  minutes < 10 ? "0" + minutes : minutes
+                } hrs`;
+              }
+              const hora24 = convertir12a24(hora12);
+
+              $("#hora_salida").text(hora24);
+              $("#tipo_bus").text(ticket.bus_type);
               $("#boletoConfirmado").removeClass("d-none");
               $("#asientos").addClass("d-none");
 
@@ -302,7 +321,7 @@
               // Actualización en la base de datos
               axios.post(
                 "https://log-totem.dev-wit.com/boletos/api/update.php",
-                bookingDataUpdate 
+                bookingDataUpdate
               );
             })
             .then(() => {
