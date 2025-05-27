@@ -223,6 +223,7 @@
           const reservaUrl = `https://newstg3-gdsbus.kupos.cl/gds/api/tentative_booking/${idBus}.json?api_key=TSXFQYAPI25766888&region=chile`;
           const confirmUrlBase = `https://newstg3-gdsbus.kupos.cl/gds/api/confirm_booking`;
 
+          asientoSelect.disabled = true;
           $("#atras").prop("disabled", true);
 
           $("#loaderReserva").removeClass("d-none");
@@ -275,6 +276,7 @@
               $("#boletoConfirmado").removeClass("d-none");
               $("#asientos").addClass("d-none");
 
+              asientoSelect.disabled = false;
               $("#atras").prop("disabled", false);
 
               const sessionData =
@@ -330,6 +332,7 @@
             .catch((error) => {
               $("#loaderReserva").addClass("d-none");
               $("#loaderConfirmacion").addClass("d-none");
+              asientoSelect.disabled = false;
               $("#atras").prop("disabled", false);
               console.error(
                 "Error durante la reserva, confirmación o guardado:",

@@ -75,16 +75,18 @@
         }
 
         $.getJSON(url, function (data) {
-          $(document).on("click", ".generar-boleto", function () {
-            const id = $(this).data("id");
-            const registro = data.find((r) => r.id == id);
-            if (registro) {
-              sessionStorage.setItem("boleto_data", JSON.stringify(registro));
-              window.location.href = "./generar_boleto.html";
-            } else {
-              alert("No se encontró el registro.");
-            }
-          });
+          $(document)
+            .off("click", ".generar-boleto")
+            .on("click", ".generar-boleto", function () {
+              const id = $(this).data("id");
+              const registro = data.find((r) => r.id == id);
+              if (registro) {
+                sessionStorage.setItem("boleto_data", JSON.stringify(registro));
+                window.location.href = "./generar_boleto.html";
+              } else {
+                alert("No se encontró el registro.");
+              }
+            });
 
           let cards = "";
           if (data.length === 0) {
@@ -105,7 +107,9 @@
               }
 
               // Fecha y hora del viaje en objeto Date
-              const viajeDateTime = new Date(`${row.fecha_viaje}T${row.hora_viaje}`);
+              const viajeDateTime = new Date(
+                `${row.fecha_viaje}T${row.hora_viaje}`
+              );
               const ahora = new Date();
               const fechaVencida = viajeDateTime <= ahora;
 
@@ -156,13 +160,13 @@
             <button
               class="btn btn-sm ${
                 fechaVencida ? "btn-secondary" : "btn-success"
-                } generar-boleto p-2"
+              } generar-boleto p-2"
                 data-id="${row.id}"
                 ${fechaVencida ? "disabled" : ""}
                 >Generar Boleto</button>
          </div>
           `
-         : ""
+            : ""
         }
       </div>
    </div>
