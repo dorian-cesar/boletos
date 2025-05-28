@@ -2,9 +2,21 @@ bus_datos = {};
 let asientosDisponibles = [];
 idBus = "";
 
+const Toast = Swal.mixin({
+  toast: true,
+  position: "center",
+  iconColor: "white",
+  customClass: {
+    popup: "colored-toast",
+  },
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
+
 $(document).ready(function () {
   $("#atras").on("click", function () {
-    window.location.href = "index.html";
+    window.location.href = "../index.html";
   });
   const rawData = sessionStorage.getItem("boleto_data");
   const asientoSelect = document.getElementById("asientoSelect");
@@ -48,9 +60,17 @@ $(document).ready(function () {
         let availableArray = availableString.split(",");
         availableArray.shift();
 
-        console.log("bus_data: ", response.data)
+        console.log("bus_data: ", response.data);
+
+        // availableArray = []; // simular servicio sin asientos
 
         if (!availableArray.length || !availableArray[0]) {
+          Toast.fire({
+            icon: "info",
+            title:
+              "No hay asientos disponibles en el bus, buscando alternativas...",
+            timer: 5000,
+          });
           console.warn(
             `No hay asientos en el bus ${busId}, buscando alternativas...`
           );
@@ -99,6 +119,10 @@ $(document).ready(function () {
     const fechaViaje = refData.travel_date;
 
     if (!idOrigen || !idDestino || !fechaViaje) {
+      Toast.fire({
+        icon: "error",
+        title: "Faltan datos para obtener servicios",
+      });
       console.error("Faltan datos para obtener servicios");
       return;
     }
@@ -122,6 +146,10 @@ $(document).ready(function () {
     if (!busIds.length) {
       asientoSelect.innerHTML =
         '<option value="">No se encontraron buses con asientos</option>';
+      Toast.fire({
+        icon: "error",
+        title: "No se encontraron buses con asientos",
+      });
       return;
     }
 
@@ -136,12 +164,25 @@ $(document).ready(function () {
 
         if (availableArray.length && availableArray[0]) {
           setupBusData(response.data.result, availableArray, nextBusId);
-          console.log(`Servicio ${nextBusId} con asientos disponibles`)
+          const fecha = response.data.result.travel_date;
+          const hora = response.data.result.dep_time;
+          Toast.fire({
+            icon: "success",
+            title: `¡Bus con asientos disponibles!`,
+          });
+          $("#mensajeBus")
+            .text(`Atención: Su bus tiene fecha ${fecha} a las ${hora} hrs `)
+            .removeClass("d-none");
+          console.log(`Servicio ${nextBusId} con asientos disponibles`);
         } else {
           tryNextBus(busIds);
         }
       })
       .catch((error) => {
+        Toast.fire({
+          icon: "error",
+          title: `Error con bus ${nextBusId}, intentando siguiente...`,
+        });
         console.warn(
           `Error con bus ${nextBusId}, intentando siguiente...`,
           error
@@ -314,7 +355,10 @@ $(document).ready(function () {
           "Error durante la reserva, confirmación o guardado:",
           error
         );
-        alert("Ocurrió un error al procesar el boleto.");
+        Toast.fire({
+          icon: "error",
+          title: "Ocurrió un error al procesar el boleto",
+        });
       });
   });
 });
