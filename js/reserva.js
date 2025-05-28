@@ -61,7 +61,7 @@ $(document).ready(function () {
 
         console.log("bus_data: ", response.data);
 
-        availableArray = []; // simular servicio sin asientos
+        // availableArray = []; // simular servicio sin asientos
 
         if (!availableArray.length || !availableArray[0]) {
           Toast.fire({
