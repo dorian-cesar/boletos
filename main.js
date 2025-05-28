@@ -32,6 +32,7 @@ $("#consulta-form").on("submit", function (e) {
   }
 
   $.getJSON(url, function (data) {
+    data = data.filter((row) => row.numTotem !== "192.168.88.254");
     $(document)
       .off("click", ".generar-boleto")
       .on("click", ".generar-boleto", function () {
