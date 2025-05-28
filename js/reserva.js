@@ -56,13 +56,12 @@ $(document).ready(function () {
     axios
       .get(url)
       .then((response) => {
-        const availableString = response.data.result.bus_layout.available;
+        const availableString = response.data.result.bus_layout.available
         let availableArray = availableString.split(",");
-        availableArray.shift();
 
         console.log("bus_data: ", response.data);
 
-        // availableArray = []; // simular servicio sin asientos
+        availableArray = []; // simular servicio sin asientos
 
         if (!availableArray.length || !availableArray[0]) {
           Toast.fire({
@@ -89,6 +88,13 @@ $(document).ready(function () {
     bus_datos = result;
     idBus = busIdUsado;
     boarding_at = result.boarding_stage_coordinates.split("|")[0];
+
+    // mensaje de prueba
+    // $("#mensajeBus")
+    //   .text(
+    //     `Atención: Su bus tiene fecha ${bus_datos.travel_date} a las ${bus_datos.dep_time} hrs `
+    //   )
+    //   .removeClass("d-none");
 
     const seats = availableArray
       .map((item) => {
@@ -117,6 +123,7 @@ $(document).ready(function () {
     const idOrigen = refData.origin_id;
     const idDestino = refData.destination_id;
     const fechaViaje = refData.travel_date;
+    const horaViaje = refData.dep_time;
 
     if (!idOrigen || !idDestino || !fechaViaje) {
       Toast.fire({
@@ -134,16 +141,42 @@ $(document).ready(function () {
       .then((res) => {
         const result = res.data.result;
         result.shift();
-        const servicios = result.map((item) => item[0]);
-        tryNextBus(servicios);
+        const toMinutes = (hora) => {
+          const [h, m] = hora.split(":").map(Number);
+          return h * 60 + m;
+        };
+        const minutosViaje = toMinutes(horaViaje);
+        const serviciosInfo = result.map((servicio) => {
+          const idServicio = servicio[0];
+          const horaServicio = servicio[9];
+          return {
+            id: idServicio,
+            hora: horaServicio,
+            minutos: toMinutes(horaServicio),
+            servicioData: servicio,
+          };
+        });
+
+        const serviciosPosteriores = serviciosInfo
+          .filter((servicio) => {
+            if (!servicio.id || !servicio.hora) return false;
+            return servicio.minutos > minutosViaje;
+          })
+          .sort((a, b) => a.minutos - b.minutos);
+
+        console.log("Servicios posteriores ordenados:", serviciosPosteriores);
+
+        const idsOrdenados = serviciosPosteriores.map((serv) => serv.id);
+
+        tryNextBus(idsOrdenados);
       })
       .catch((error) => {
         console.error("Error al obtener servicios:", error);
       });
   }
 
-  function tryNextBus(busIds) {
-    if (!busIds.length) {
+  function tryNextBus(busIds, currentIndex = 0) {
+    if (currentIndex >= busIds.length) {
       asientoSelect.innerHTML =
         '<option value="">No se encontraron buses con asientos</option>';
       Toast.fire({
@@ -153,15 +186,21 @@ $(document).ready(function () {
       return;
     }
 
-    const nextBusId = busIds.shift();
+    const nextBusId = busIds[currentIndex];
+    console.log(
+      `Probando bus ${currentIndex + 1}/${busIds.length}: ${nextBusId}`
+    );
+
     const url = `https://newstg3-gdsbus.kupos.cl/gds/api/ui_schedule/${nextBusId}.json?api_key=TSXFQYAPI25766888`;
 
     axios
       .get(url)
       .then((response) => {
-        const availableString = response.data.result.bus_layout.available;
+        const availableString = response.data.result.bus_layout.available
         const availableArray = availableString.split(",");
-
+        if (availableArray[0] === "") {
+          availableArray.shift()
+        }
         if (availableArray.length && availableArray[0]) {
           setupBusData(response.data.result, availableArray, nextBusId);
           const fecha = response.data.result.travel_date;
@@ -174,20 +213,23 @@ $(document).ready(function () {
             .text(`Atención: Su bus tiene fecha ${fecha} a las ${hora} hrs `)
             .removeClass("d-none");
           console.log(`Servicio ${nextBusId} con asientos disponibles`);
+          return;
         } else {
-          tryNextBus(busIds);
+          console.log(
+            `Bus ${nextBusId} sin asientos, probando siguiente...`
+          );
+
+          tryNextBus(busIds, currentIndex + 1);
         }
       })
       .catch((error) => {
+        console.error(`Error con bus ${nextBusId}:`, error);
         Toast.fire({
           icon: "error",
-          title: `Error con bus ${nextBusId}, intentando siguiente...`,
+          title: `Error con bus, intentando siguiente...`,
+          timer: 2000,
         });
-        console.warn(
-          `Error con bus ${nextBusId}, intentando siguiente...`,
-          error
-        );
-        tryNextBus(busIds);
+        tryNextBus(busIds, currentIndex + 1);
       });
   }
 
