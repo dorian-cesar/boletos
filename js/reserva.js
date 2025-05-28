@@ -51,7 +51,7 @@ $(document).ready(function () {
   }
 
   function loadBusData(busId) {
-    const url = `https://newstg3-gdsbus.kupos.cl/gds/api/ui_schedule/${busId}.json?api_key=TSXFQYAPI25766888`;
+    const url = `https://gds.kupos.com/gds/api/ui_schedule/${busId}.json?api_key=TSSDFPAPI30103014`;
 
     axios
       .get(url)
@@ -134,7 +134,7 @@ $(document).ready(function () {
       return;
     }
 
-    const url = `https://newstg3-gdsbus.kupos.cl/gds/api/ui_schedules/${idOrigen}/${idDestino}/${fechaViaje}.json?api_key=TSXFQYAPI25766888`;
+    const url = `https://gds.kupos.com/gds/api/ui_schedules/${idOrigen}/${idDestino}/${fechaViaje}.json?api_key=TSSDFPAPI30103014`;
 
     axios
       .get(url)
@@ -191,7 +191,7 @@ $(document).ready(function () {
       `Probando bus ${currentIndex + 1}/${busIds.length}: ${nextBusId}`
     );
 
-    const url = `https://newstg3-gdsbus.kupos.cl/gds/api/ui_schedule/${nextBusId}.json?api_key=TSXFQYAPI25766888`;
+    const url = `https://gds.kupos.com/gds/api/ui_schedule/${nextBusId}.json?api_key=TSSDFPAPI30103014`;
 
     axios
       .get(url)
@@ -280,8 +280,8 @@ $(document).ready(function () {
 
     console.log("Payload de reserva:", payload);
 
-    const reservaUrl = `https://newstg3-gdsbus.kupos.cl/gds/api/tentative_booking/${idBus}.json?api_key=TSXFQYAPI25766888&region=chile`;
-    const confirmUrlBase = `https://newstg3-gdsbus.kupos.cl/gds/api/confirm_booking`;
+    const reservaUrl = `https://gds.kupos.com/gds/api/tentative_booking/${idBus}.json?api_key=TSSDFPAPI30103014&region=chile`;
+    const confirmUrlBase = `https://gds.kupos.com/gds/api/confirm_booking`;
 
     asientoSelect.disabled = true;
     $("#atras").prop("disabled", true);
@@ -300,7 +300,7 @@ $(document).ready(function () {
         console.log("Reserva temporal:", reserva);
 
         return axios.post(
-          `${confirmUrlBase}/${reserva}.json?api_key=TSXFQYAPI25766888&region=chile`
+          `${confirmUrlBase}/${reserva}.json?api_key=TSSDFPAPI30103014&region=chile`
         );
       })
       .then((confirmResponse) => {
