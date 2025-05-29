@@ -58,6 +58,9 @@ $(document).ready(function () {
       .then((response) => {
         const availableString = response.data.result.bus_layout.available
         let availableArray = availableString.split(",");
+        if (availableArray[0] === "") {
+          availableArray.shift()
+        }
 
         console.log("bus_data: ", response.data);
 
